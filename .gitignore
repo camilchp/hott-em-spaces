@@ -7,3 +7,5 @@ tmp/
 *.run.xml
 *.aux
 .auctex-auto
+*.gz
+/rapport/_region_.tex
