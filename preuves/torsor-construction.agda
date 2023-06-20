@@ -19,21 +19,21 @@ BAut X = Σ ⟨ X ⟩ (λ x  → ∥ (pt X) ≡ x ∥₁)
 module _ (G : Group ℓ) where
 
   open GroupStr (snd G)
-  open IsGroup isGroup
+  -- open IsGroup isGroup
 
   record GroupAction (X : hSet ℓ) : Type ℓ where
     field
       _*_ : ⟨ G ⟩ → ⟨ X ⟩ → ⟨ X ⟩
       unit : (x : ⟨ X ⟩) → 1g * x ≡ x
-      composition : (x : ⟨ X ⟩) → (g1 g2 : ⟨ G ⟩) → (g1 · g2) * x ≡ g1 * (g2 * x)
+      composition : (g1 g2 : ⟨ G ⟩) (x : ⟨ X ⟩) → g1 * (g2 * x) ≡ (g1 · g2) * x
 
   gset = Σ (hSet ℓ) (λ X → GroupAction X)
 
   left-product : GroupAction (⟨ G ⟩ , isSetGroup G)
   left-product = record {
-    _*_ = λ g x → (g · x);
-    unit = ·IdR;
-    composition = λ x g1 g2 → ·Assoc
+    _*_ = _·_;
+    unit = ·IdL;
+    composition = ·Assoc
     }
 
   -- postulate
