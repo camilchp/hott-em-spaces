@@ -5,6 +5,7 @@ open import Cubical.Core.Everything
 open import Cubical.Algebra.Group
 open import Cubical.HITs.PropositionalTruncation
 open import Cubical.Homotopy.Loopspace
+open import Cubical.Data.Sigma
 
 private
   variable
@@ -16,6 +17,7 @@ BAut X = ( Σ ⟨ X ⟩ (λ x  → ∥ (pt X) ≡ x ∥₁), (pt X , ∣ refl �
 
 -- Lemme encode-décode pour les loop-spaces (HoTT Lemme 8.9.1)
 postulate
+  -- plutôt recognizeId
   encode-decode-loops : {A : Pointed ℓ} (code : ⟨ A ⟩ → Type ℓ)
     → (c0 : code (pt A))
     → (decode : (x : ⟨ A ⟩) → (code x → (pt A ≡ x)))
@@ -32,10 +34,13 @@ loop-cc-is-loop : {A : Pointed ℓ} → Ω (BAut A) ≃∙ Ω A
 loop-cc-is-loop {ℓ} {A} = (encode-decode-loops {ℓ} {BAut A}
   (λ (x , _) → pt A ≡ x)  -- code
   refl                     -- c0 ≡ (a0 = a0)
-  (λ (x , t) p → Σ-≡-intro (p , (squash₁ {!!} {!!})))
+  decode -- (λ (x , t) p → Σ-≡-intro (p , (squash₁ {!!} {!!})))
   {!!}
   {!!}
   ) , {!!}
+  where
+  decode : (x : ⟨ BAut A ⟩) → pt A ≡ fst x → pt (BAut A) ≡ x
+  decode (x , t) p = ΣPathP (p , {!!})
 
 
 module _ (G : Group ℓ) where
