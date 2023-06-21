@@ -10,11 +10,33 @@ private
   variable
     ℓ : Level
 
-BAut : Pointed ℓ → Type ℓ
-BAut X = Σ ⟨ X ⟩ (λ x  → ∥ (pt X) ≡ x ∥₁)
+-- Définition de la composante connexe d'un point
+BAut : Pointed ℓ → Pointed ℓ
+BAut X = ( Σ ⟨ X ⟩ (λ x  → ∥ (pt X) ≡ x ∥₁), (pt X , ∣ refl ∣₁) )
 
--- postulate
---  loop-cc-is-cc : (X : Pointed ℓ) → Ω X ≃ Ω (BAut X)
+-- Lemme encode-décode pour les loop-spaces (HoTT Lemme 8.9.1)
+postulate
+  encode-decode-loops : {A : Pointed ℓ} (code : ⟨ A ⟩ → Type ℓ)
+    → (c0 : code (pt A))
+    → (decode : (x : ⟨ A ⟩) → (code x → (pt A ≡ x)))
+    → ((c : code (pt A)) → ((subst⁻ code (decode (pt A) c) c0) ≡ c))
+    → (decode (pt A) c0 ≡ refl)
+    → (pt A ≡ pt A) ≃ code (pt A)
+
+  Σ-≡-intro :
+    ∀ {α β}{A : Type α}{B : A → Type β}{a a' : A}{b : B a}{b' : B a'}
+    → (Σ (a ≡ a') λ p → subst B p b ≡ b') → (a , b) ≡ (a' , b')
+
+-- Le loop space d'un point dans un espace est son loop-space dans sa composante connexe
+loop-cc-is-loop : {A : Pointed ℓ} → Ω (BAut A) ≃∙ Ω A
+loop-cc-is-loop {ℓ} {A} = (encode-decode-loops {ℓ} {BAut A}
+  (λ (x , _) → pt A ≡ x)  -- code
+  refl                     -- c0 ≡ (a0 = a0)
+  (λ (x , t) p → Σ-≡-intro (p , (squash₁ {!!} {!!})))
+  {!!}
+  {!!}
+  ) , {!!}
+
 
 module _ (G : Group ℓ) where
 
@@ -35,9 +57,6 @@ module _ (G : Group ℓ) where
     unit = ·IdL;
     composition = ·Assoc
     }
-
-  -- postulate
-  --   left-product : GroupAction (⟨ G ⟩ , isSetGroup G)
 
   principal-torsor : gset
   principal-torsor = ((⟨ G ⟩ , isSetGroup G) , left-product)

@@ -8,4 +8,7 @@ tmp/
 *.aux
 .auctex-auto
 *.gz
+*.pdf
+*.agdai
+
 /rapport/_region_.tex
