@@ -40,8 +40,7 @@ loop-cc-is-loop {ℓ} {A} = (encode-decode-loops {ℓ} {BAut A}
   ) , {!!}
   where
   decode : (x : ⟨ BAut A ⟩) → pt A ≡ fst x → pt (BAut A) ≡ x
-  decode (x , t) p = ΣPathP (p , {!!})
-
+  decode (x , t) p = ΣPathP (p , toPathP (isPropPropTrunc _ _))
 
 module _ (G : Group ℓ) where
 
