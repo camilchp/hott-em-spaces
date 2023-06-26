@@ -9,7 +9,7 @@ open import Cubical.Data.Sigma
 open import Cubical.Foundations.Equiv.Fiberwise
 open import Cubical.Homotopy.Connected
 
-open import Actions
+open import GSet
 
 private
   variable
@@ -69,7 +69,6 @@ loop-cc-is-loop' {ℓ} {A} = recognizeId {ℓ} {ℓ} {⟨ BAut A ⟩} {a0'} (λ 
   contract :  (y : Σ ⟨ BAut A ⟩ (λ x → a0 ≡ fst x)) → ( a0' , refl) ≡ y
   contract ((x , t) , p) = ΣPathP ((ΣPathP (p , toPathP (isPropPropTrunc _ t))) , {!!})
 
-
 postulate
   -- Si X et Y pointés connexes et f induit une equivalence ΩX ≃∙ ΩY alors f est une equivalence
   connected-loop-equivalence : {X Y : Pointed ℓ } {f : X →∙ Y} →
@@ -77,3 +76,15 @@ postulate
     isConnected 0 ⟨ Y ⟩ →
     isEquiv (fst (Ω→ f)) →
     isEquiv (fst f)
+
+module _ (G : Group ℓ) where
+
+  open GroupStr (snd G)
+
+  left-action : Action {ℓ} G ⟨ G ⟩
+  left-action = record {
+    _*_ = _·_ ;
+    is-set = is-set ;
+    ·Unit = ·IdL ;
+    ·Composition = ·Assoc
+    }
