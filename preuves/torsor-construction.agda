@@ -57,17 +57,18 @@ loop-cc-is-loop {ℓ} {A} = (encode-decode-loops {ℓ} {BAut A}
   encode-decode : (c : code a0') → ((subst⁻ code (decode a0' c) c0) ≡ c)
   encode-decode c =  {!!}
 
-loop-cc-is-loop' : {A : Pointed ℓ} → Ω (BAut A) ≃∙ Ω A
-loop-cc-is-loop' {ℓ} {A} = recognizeId {ℓ} {ℓ} {⟨ BAut A ⟩} {a0'} (λ (x , _) → a0 ≡ x) refl ((a0' , refl) , contract)  {!!}  , {!!} where
+--  -- Une preuve par recognizeID nécessiterait a priori de montrer que (a0 = a0) contractible...
+-- loop-cc-is-loop' : {A : Pointed ℓ} → Ω (BAut A) ≃∙ Ω A
+-- loop-cc-is-loop' {ℓ} {A} = recognizeId {ℓ} {ℓ} {⟨ BAut A ⟩} {a0'} (λ (x , _) → a0 ≡ x) refl ((a0' , refl) , contract)  {!!}  , {!!} where
 
-  a0 : ⟨ A ⟩
-  a0 = pt A
+--   a0 : ⟨ A ⟩
+--   a0 = pt A
 
-  a0' : ⟨ BAut A ⟩
-  a0' = pt (BAut A)
+--   a0' : ⟨ BAut A ⟩
+--   a0' = pt (BAut A)
 
-  contract :  (y : Σ ⟨ BAut A ⟩ (λ x → a0 ≡ fst x)) → ( a0' , refl) ≡ y
-  contract ((x , t) , p) = ΣPathP ((ΣPathP (p , toPathP (isPropPropTrunc _ t))) , {!!})
+--   contract :  (y : Σ ⟨ BAut A ⟩ (λ x → a0 ≡ fst x)) → ( a0' , refl) ≡ y
+--   contract ((x , t) , p) = ΣPathP ((ΣPathP (p , toPathP (isPropPropTrunc _ t))) , {!!})
 
 postulate
   -- Si X et Y pointés connexes et f induit une equivalence ΩX ≃∙ ΩY alors f est une equivalence
@@ -81,6 +82,7 @@ module _ (G : Group ℓ) where
 
   open GroupStr (snd G)
 
+  -- action de G sur lui-même par multiplication à gauche
   left-action : Action {ℓ} G ⟨ G ⟩
   left-action = record {
     _*_ = _·_ ;
@@ -88,3 +90,14 @@ module _ (G : Group ℓ) where
     ·Unit = ·IdL ;
     ·Composition = ·Assoc
     }
+
+  -- On appelle le GSet correspondant "torseur principal de G"
+  PG : GSet ℓ G
+  PG = ⟨ G ⟩ , gsetsr left-action
+
+  -- La composante connexe de PG dans les GSets est appelée BG, "espace classifiant de G".
+  BG : Pointed _
+  BG = BAut (GSet ℓ G , PG)
+
+  lemme : ⟨ G ⟩ ≃ (PG ≡ PG)
+  lemme = {!!}

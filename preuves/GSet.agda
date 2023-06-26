@@ -61,3 +61,10 @@ GSetEquiv X Y = Σ[ e ∈ (⟨ X ⟩ ≃ ⟨ Y ⟩) ] IsGSetEquiv (str X) e (str
 
 gsetEquivFun : {G : Group ℓ} {X : GSet ℓ G} {Y : GSet ℓ G} → GSetEquiv X Y → ⟨ X ⟩ → ⟨ Y ⟩
 gsetEquivFun e = e .fst .fst
+
+GSetEquiv→GSetIso : {G : Group ℓ} {X : GSet ℓ G} {Y : GSet ℓ G} → GSetEquiv X Y → GSetIso X Y
+fst (GSetEquiv→GSetIso e) = equivToIso (fst e)
+snd (GSetEquiv→GSetIso e) = snd e
+
+-- SetEquivToPath : {G : Group ℓ} {X : GSet ℓ G} {Y : GSet ℓ G} → GSetEquiv X Y → X ≡ Y
+-- GSetEquivToPath e = {!isoToPath ?!}
