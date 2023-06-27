@@ -49,6 +49,13 @@ unquoteDecl IsGSetHomIsoΣ = declareRecordIsoΣ IsGSetHomIsoΣ (quote IsGSetHom)
 GSetHom : {G : Group ℓ} (X : GSet ℓ G) (Y : GSet ℓ G) → Type ℓ
 GSetHom X Y = Σ[ f ∈ (⟨ X ⟩ → ⟨ Y ⟩) ] IsGSetHom (str X) f (str Y)
 
+-- module _ {G : Group ℓ} {X : Type ℓ} {Y : Type ℓ} {M : GSetStr {ℓ} G X} {f : X → Y} {N : GSetStr {ℓ} G Y}
+--   (pres : (g : ⟨ G ⟩) (x : X) → f (g M.* x) ≡ N .Action._*_ g (f x))
+--   where
+
+--   makeIsGSetHom : IsGSetHom M f N
+--   makeIsGSetHom .IsGSetHom.pres* = pres
+
 GSetIso : {G : Group ℓ} (X : GSet ℓ G) (Y : GSet ℓ G) → Type ℓ
 GSetIso X Y =  Σ[ e ∈ Iso ⟨ X ⟩ ⟨ Y ⟩ ] IsGSetHom (str X) (e .Iso.fun) (str Y)
 
@@ -66,5 +73,13 @@ GSetEquiv→GSetIso : {G : Group ℓ} {X : GSet ℓ G} {Y : GSet ℓ G} → GSet
 fst (GSetEquiv→GSetIso e) = equivToIso (fst e)
 snd (GSetEquiv→GSetIso e) = snd e
 
--- SetEquivToPath : {G : Group ℓ} {X : GSet ℓ G} {Y : GSet ℓ G} → GSetEquiv X Y → X ≡ Y
--- GSetEquivToPath e = {!isoToPath ?!}
+GSetEquivToPath : {G : Group ℓ} {X : GSet ℓ G} {Y : GSet ℓ G} → GSetEquiv X Y → ⟨ X ⟩ ≡ ⟨ Y ⟩
+GSetEquivToPath e = isoToPath (fst (GSetEquiv→GSetIso e))
+
+-- idGSetIso : {G : Group ℓ} {X : GSet ℓ G} → GSetIso X X
+-- fst idGSetIso = idIso
+-- snd idGSetIso = makeIsGSetHom λ _ _ → refl
+
+-- idGSetEquiv : {G : Group ℓ} {X : GSet ℓ G} → GSetEquiv G G
+-- fst (idGSetEquiv {G = G}) = idEquiv ⟨ G ⟩
+-- snd idGSetEquiv = makeIsGSetHom λ _ _ → refl
