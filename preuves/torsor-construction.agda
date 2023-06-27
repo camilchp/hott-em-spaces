@@ -1,6 +1,8 @@
 {-# OPTIONS --cubical #-}
 
 open import Cubical.Foundations.Everything
+open import Cubical.Foundations.Equiv
+open import Cubical.Foundations.Isomorphism
 open import Cubical.Core.Everything
 open import Cubical.Algebra.Group
 open import Cubical.HITs.PropositionalTruncation
@@ -21,7 +23,13 @@ BAut X = ( Σ ⟨ X ⟩ (λ x  → ∥ (pt X) ≡ x ∥₁), (pt X , ∣ refl �
 
 
 loop-cc-is-loop'' : {A : Pointed ℓ} → Ω (BAut A) ≃∙ Ω A
-loop-cc-is-loop'' {ℓ} {A} = ((λ x → fst (PathPΣ x)) , record { equiv-proof = λ y → (ΣPathP (y , {!!} ), refl) , {!!} }) , {!!}
+loop-cc-is-loop'' {ℓ} {A} = isoToEquiv e , refl
+  where
+  e : Iso (fst (Ω (BAut A))) (fst (Ω A))
+  Iso.fun e p = cong fst p
+  Iso.inv e p = ΣPathP (p , toPathP (isPropPropTrunc _ _))
+  Iso.rightInv e p = refl
+  Iso.leftInv e p = isoFunInjective (equivToIso (invEquiv (Σ≡PropEquiv (λ _ → isPropPropTrunc))))  _ _ refl  
 
 postulate
   -- Si X et Y pointés connexes et f induit une equivalence ΩX ≃∙ ΩY alors f est une equivalence
