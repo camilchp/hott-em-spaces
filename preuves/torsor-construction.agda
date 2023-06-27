@@ -24,6 +24,7 @@ BAut X = ( Σ ⟨ X ⟩ (λ x  → ∥ (pt X) ≡ x ∥₁), (pt X , ∣ refl �
 
 loop-cc-is-loop'' : {A : Pointed ℓ} → Ω (BAut A) ≃∙ Ω A
 loop-cc-is-loop'' {ℓ} {A} = isoToEquiv e , refl
+  -- ((λ x → fst (PathPΣ x)) , record { equiv-proof = λ y → (ΣPathP (y , {!!} ), refl) , {!!} }) , {!!}
   where
   e : Iso (fst (Ω (BAut A))) (fst (Ω A))
   Iso.fun e p = cong fst p
