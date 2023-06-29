@@ -159,8 +159,8 @@ GSetEquivIsPath {ℓ} {G} {X} {Y} = isoToEquiv e
         equal-actions {G} {X} A B refl =  isoFunInjective (compIso GSetStrIsoΣ ActionIsoΣ) A B
           (ΣPathP (refl ,
             ΣPathP (isPropIsSet _ _ ,
-              ΣPathP ( funExt {_} {_} {_} {_} {A .GSetStr.·Unit} {B .GSetStr.·Unit} (λ x → {!!}) ,
-                funExt {_} {_} {_} {_} {A .GSetStr.·Composition} {B .GSetStr.·Composition} (λ x → {!!} )))))
+              ΣPathP ( funExt {f = A .GSetStr.·Unit} {g = B .GSetStr.·Unit} (λ _ → toPathP (B .GSetStr.is-set _ _ _ _)) ,
+                funExt {f = A .GSetStr.·Composition} {g = B .GSetStr.·Composition} (λ x → toPathP {!!} )))))
 
         e' : Iso  (GSetStr G ⟨ X ⟩) (GSetStr G ⟨ Y ⟩)
         Iso.fun e' = induce-structure-iso ((f , fEq) , fHom)
