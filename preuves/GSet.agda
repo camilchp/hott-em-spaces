@@ -87,6 +87,32 @@ idGSetEquiv : {G : Group ℓ} {X : GSet ℓ G} → GSetEquiv X X
 fst (idGSetEquiv {X = X}) = idEquiv ⟨ X ⟩
 snd idGSetEquiv = makeIsGSetHom λ _ _ → refl
 
+-- Actions that coincide are equal
+equalActions : {G : Group ℓ} {X : Type ℓ} (A B : GSetStr G X) → A .GSetStr._*_ ≡ B .GSetStr._*_ → A ≡ B
+equalActions {G} {X} A B refl =  isoFunInjective (compIso GSetStrIsoΣ ActionIsoΣ) A B
+  (ΣPathP (refl ,
+    ΣPathP (isPropIsSet _ _ ,
+      ΣPathP ( (funExt (λ _ → toPathP (B .GSetStr.is-set _ _ _ _))) ,
+      funExt λ _ →
+        funExt λ _ →
+          funExt λ _ → toPathP (B .GSetStr.is-set _ _ _ _)))))
+
+-- (GSetStr G X) is a set (the set of actions of G on X)
+IsSetGSetStr : {G : Group ℓ} {X : Type ℓ} → isSet(GSetStr G X)
+IsSetGSetStr {G = G} {X = X} s1 s2 p1 p2 = cong (λ z → (cong (Iso.inv GSetStrIsoΣ) (cong (Iso.inv ActionIsoΣ) z)))
+  (cong ΣPathP
+    (ΣPathP ( isSet→ {A' = X → X} {A = ⟨ G ⟩} (isSet→ {A' = X} {A = X} (GSetStr.is-set s1)) (GSetStr._*_ s1) (GSetStr._*_ s2) p1* p2* , {!!})))
+  where
+    p1' = PathPΣ (cong (Iso.fun ActionIsoΣ) (cong (Iso.fun GSetStrIsoΣ) p1))
+    p1* = fst p1'
+    p2' = PathPΣ (cong (Iso.fun ActionIsoΣ) (cong (Iso.fun GSetStrIsoΣ) p2))
+    p2* = fst p2'
+
+    p1-is-set = fst (PathPΣ (snd p2'))
+
+postulate
+  lemme-prop : {G : Group ℓ} {X : Type ℓ} → isSet(GSetStr G X)
+
 -- The reciprocal of an isomorphism is an isomorphism
 isGSetHomInv : {G : Group ℓ} {X : GSet ℓ G} {Y : GSet ℓ G} (f : GSetEquiv X Y) → IsGSetHom (str Y) (invEq (fst f)) (str X)
 isGSetHomInv {ℓ} {G} {X} {Y} ((e , eEq) , eHom) = is-hom-h
@@ -110,101 +136,99 @@ isGSetHomInv {ℓ} {G} {X} {Y} ((e , eEq) , eHom) = is-hom-h
       h (e (g ⋆₂ (h y))) ≡⟨ retEq (e , eEq) _ ⟩
       g ⋆₂ (h y) ∎
 
--- An isomorphism between X and Y induces structure on Y
-induce-structure-iso : {G : Group ℓ} {X Y : GSet ℓ G} (f : GSetEquiv X Y) → GSetStr G ⟨ X ⟩ → GSetStr G ⟨ Y ⟩
-induce-structure-iso {ℓ} {G} {X} {Y} ((f , fEq) , fHom) (gsetsr (action _*_ is-set ·Unit ·Composition)) = gsetsr (action
-  (λ g y →  f (g * (h y)))
-  (GSetStr.is-set (str Y))
-  ( λ y →
-    f ( 1g * (h y)) ≡⟨ cong f (·Unit (h y)) ⟩
-    f (h y) ≡⟨ secEq (f , fEq) y ⟩
-    y ∎
-   )
-  ( λ g1 g2 y →
-    f (g1 * h (f (g2 * (h y)))) ≡⟨ cong (λ x → f (g1 * x)) (retEq (f , fEq) _) ⟩
-    f (g1 * (g2 * (h y))) ≡⟨  cong f (·Composition g1 g2 (h y)) ⟩
-    f ((g1 · g2) * (h y)) ∎
-  ))
+postulate
+  -- We can calculate the induced structure of an equivalence
+  transport-* : {G : Group ℓ} {X Y : GSet ℓ G} {fEq : ⟨ X ⟩ ≃ ⟨ Y ⟩} →
+    subst (λ A → ⟨ G ⟩ → A → A) (ua fEq) (GSetStr._*_ (str X)) ≡ λ g y → (fst fEq) ((GSetStr._*_ (str X)) g ((invEq fEq) y))
+  -- transport-* {ℓ} {G} {X} {Y} {fEq} =
+  --   subst (λ A → ⟨ G ⟩ → A → A) (ua fEq) (_*x_) ≡⟨ {!funTypeTransp {A = Type ℓ} (λ A → ⟨ G ⟩) (λ A → A → A) {x = ⟨ X ⟩} {y = ⟨ Y ⟩} (ua fEq) (_*x_)!} ⟩
+  --   (λ g → subst (λ A → A → A) (ua fEq) (λ z → (subst (λ A → ⟨ G ⟩) (sym (ua fEq)) g) *x z)) ≡⟨ {!!} ⟩
+  --   (λ g → subst (λ A → A → A) (ua fEq) (λ z → g *x z)) ≡⟨ {!!} ⟩
+  --   (λ g y → subst (λ A → A) (ua fEq) (g *x (subst (λ A → A ) (sym (ua fEq)) y))) ≡⟨ {!!} ⟩
+  --   (λ g y → (fst fEq) (g *x ((invEq fEq) y))) ∎
+  --   where
+  --     _*x_ = GSetStr._*_ (str X)
+  --     f = fst fEq
+  --     h = fst (invEquiv fEq)
+
+theorem : {G : Group ℓ} {X Y : GSet ℓ G} → (GSetEquiv X Y) ≃ (X ≡ Y)
+theorem {ℓ} {G} {X} {Y} = isoToEquiv e
   where
 
-    h : ⟨ Y ⟩ → ⟨ X ⟩
-    h = invEq (f , fEq)
-
-    1g : ⟨ G ⟩
-    1g = str G .GroupStr.1g
-
-    _·_ : ⟨ G ⟩ → ⟨ G ⟩ → ⟨ G ⟩
-    _·_ = str G .GroupStr._·_
-
-
-GSetEquivIsPath : {G : Group ℓ} {X Y : GSet ℓ G} → GSetEquiv X Y  ≃ (X ≡ Y)
-GSetEquivIsPath {ℓ} {G} {X} {Y} = isoToEquiv e
-  where
-    B : (f : GSetEquiv X Y) → GSetStr G ⟨ X ⟩ ≃ GSetStr G ⟨ Y ⟩
-    B ((f , fEq) , fHom) = isoToEquiv e'
-      where
-
-        h' :  ⟨ Y ⟩ ≃ ⟨ X ⟩
-        h' = invEquiv (f , fEq)
-
-        h = fst h'
-
-        1g : ⟨ G ⟩
-        1g = str G .GroupStr.1g
-
-        _·_ : ⟨ G ⟩ → ⟨ G ⟩ → ⟨ G ⟩
-        _·_ = str G .GroupStr._·_
-
-        equal-actions : {G : Group ℓ} {X : Type ℓ} (A B : GSetStr G X) → A .GSetStr._*_ ≡ B .GSetStr._*_ → A ≡ B
-        equal-actions {G} {X} A B refl =  isoFunInjective (compIso GSetStrIsoΣ ActionIsoΣ) A B
-          (ΣPathP (refl ,
-            ΣPathP (isPropIsSet _ _ ,
-              ΣPathP ( funExt {f = A .GSetStr.·Unit} {g = B .GSetStr.·Unit} (λ _ → toPathP (B .GSetStr.is-set _ _ _ _)) ,
-                funExt {f = A .GSetStr.·Composition} {g = B .GSetStr.·Composition} (λ x → toPathP {!!} )))))
-
-        e' : Iso  (GSetStr G ⟨ X ⟩) (GSetStr G ⟨ Y ⟩)
-        Iso.fun e' = induce-structure-iso ((f , fEq) , fHom)
-        Iso.inv e' = induce-structure-iso (h' , isGSetHomInv (((f , fEq) , fHom)))
-        Iso.rightInv e' (gsetsr (action _*_ is-set ·Unit ·Composition)) = (
-          (Iso.fun e') ((Iso.inv e') (gsetsr (action _*_ is-set ·Unit ·Composition))) ≡⟨ refl ⟩
-          (Iso.fun e') (gsetsr (action
-          (λ g x → h (g * (f x)))
-          ((GSetStr.is-set (str X)))
-          ( λ x →
-            h ( 1g * (f x)) ≡⟨ cong h (·Unit (f x)) ⟩
-            h (f x) ≡⟨ secEq h' x ⟩
-            x ∎
-          )
-          ( λ g1 g2 x →
-              h (g1 * f (h (g2 * (f x)))) ≡⟨ cong (λ y → h (g1 * y)) (retEq h' _) ⟩
-              h (g1 * (g2 * (f x))) ≡⟨  cong h (·Composition g1 g2 (f x)) ⟩
-              h ((g1 · g2) * (f x)) ∎
-              )
-          )) ≡⟨ refl ⟩
-
-          (gsetsr (action
-            (λ g y → f (h (g * (f (h y)))))
-            ((GSetStr.is-set (str Y)))
-            ( λ y →
-              f (h ( 1g * (f (h y)))) ≡⟨ cong f ((((Iso.inv e') (gsetsr (action _*_ is-set ·Unit ·Composition)) ) .GSetStr.·Unit) (h y)) ⟩
-              f (h y) ≡⟨ secEq (f , fEq) y ⟩
-              y ∎
-            )
-            ( λ g1 g2 y →
-                f (h (g1 * f (h (f (h (g2 * f (h y))))))) ≡⟨ cong (λ x → f ((((Iso.inv e') (gsetsr (action _*_ is-set ·Unit ·Composition)) ) .GSetStr._*_) g1 x)) (retEq (f , fEq) _) ⟩
-                f (h (g1 * (f (h (g2 * f (h y))))))  ≡⟨  cong f ((((Iso.inv e') (gsetsr (action _*_ is-set ·Unit ·Composition))) .GSetStr.·Composition) g1 g2 (h y)) ⟩
-                f (h ((g1 · g2) * (f (h y)))) ∎
-            )
-          )) ≡⟨ {!!} ⟩
-          (gsetsr (action _*_ is-set ·Unit ·Composition)) ∎
-          )
-        Iso.leftInv e' = {!!}
-
-    C : (f : GSetEquiv X Y) → GSetStr G ⟨ X ⟩ ≡ GSetStr G ⟨ Y ⟩
-    C f = isoToPath ((equivToIso (B f)))
+    _*y_ = GSetStr._*_ (str Y)
+    _*x_ = GSetStr._*_ (str X)
 
     e : Iso (GSetEquiv X Y) (X ≡ Y)
-    Iso.fun e = λ f → ΣPathP (isoToPath (equivToIso (fst f)) , {!!})
-    Iso.inv e = {!!}
-    Iso.rightInv e = {!!}
+    Iso.fun e f = ΣPathP (ua (fst f) , toPathP (equalActions induced-structure (str Y) induced-action-≡-action))
+      where
+
+        h' = invEquiv (fst f)
+        h = invEq (fst f)
+        fFun = fst (fst f)
+
+        induced-structure : GSetStr G ⟨ Y ⟩
+        induced-structure = transport (λ i → GSetStr G (ua (fst f) i)) (str X)
+
+        _*i_ = GSetStr._*_ induced-structure
+
+        -- We want to show that *y ≡ *i.
+
+        -- We have shown that g *i y ≡ f (g *x (h y))
+        postulate
+          lem1 : (g : ⟨ G ⟩) (y : ⟨ Y ⟩) → g *i y ≡ fFun (g *x (h y))
+
+        -- Since h is a GSetHom,  f (g *x (h y)) ≣ f h(g *y y) ≡ g *y y
+        lem2 : (g : ⟨ G ⟩) (y : ⟨ Y ⟩) → (g *i y) ≡ (g *y y)
+        lem2 g y =
+          g *i y ≡⟨ lem1 g y ⟩
+          fFun ( g *x (h y)) ≡⟨ cong fFun (sym ((IsGSetHom.pres* (isGSetHomInv f)) g y)) ⟩
+          fFun ( h (g *y y)) ≡⟨ secEq (fst f) (g *y y) ⟩
+          g *y y ∎
+
+        -- By function extensionality we have *y ≡ *i
+        induced-action-≡-action : _*i_ ≡ _*y_
+        induced-action-≡-action = funExt  λ _ → funExt λ _ → (lem2 _ _)
+
+    Iso.inv e p = fEq , record { pres* = fHom }
+      where
+        -- p is a tuple containing :
+        --   · a path between underlying sets
+        --   · a path between their structures over the first path.
+        p-sig = PathPΣ p
+
+        -- that first path induces an equivalence
+        fEq : ⟨ X ⟩ ≃ ⟨ Y ⟩
+        fEq = pathToEquiv (fst p-sig)
+        f : ⟨ X ⟩ → ⟨ Y ⟩
+        f = fst fEq
+
+        hEq : ⟨ Y ⟩ ≃ ⟨ X ⟩
+        hEq = invEquiv fEq
+        h : ⟨ Y ⟩ → ⟨ X ⟩
+        h = fst hEq
+
+        -- the second tells us f respects structure.
+        fHom : (g : ⟨ G ⟩) (x : ⟨ X ⟩) → f (g *x x) ≡ g *y (f x)
+        fHom g x =
+          f (g *x x) ≡⟨ cong (λ z → f (g *x z)) x-y  ⟩
+          f (g *x (h y)) ≡⟨ (sym (lem1 g y)) ∙ lem3 g y ⟩
+          g *y y ≡⟨ refl ⟩
+          g *y (f x) ∎
+          where
+
+            y : ⟨ Y ⟩
+            y = f x
+
+            x-y : x ≡ h y
+            x-y = sym (secEq hEq x)
+
+            _*i_ : ⟨ G ⟩ → ⟨ Y ⟩ → ⟨ Y ⟩
+            _*i_ = GSetStr._*_ (transport (λ i → GSetStr G (fst (p-sig) i)) (str X))
+
+            postulate
+              lem1 : (g : ⟨ G ⟩) (y : ⟨ Y ⟩) → g *i y ≡ f (g *x (h y))
+              lem2 : _*i_ ≡ _*y_
+              lem3 : (g : ⟨ G ⟩) (y : ⟨ Y ⟩) → g *i y ≡ g *y y
+
+    Iso.rightInv e p = cong ΣPathP (ΣPathP (ua-pathToEquiv (fst (PathPΣ p)) , {!!}))
     Iso.leftInv e = {!!}
