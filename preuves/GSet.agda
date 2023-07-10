@@ -1,6 +1,8 @@
-{-# OPTIONS --cubical #-}
+{-# OPTIONS --cubical --allow-unsolved-metas #-}
 
 open import Cubical.Foundations.Everything
+open import Cubical.Foundations.Prelude
+open import Cubical.Foundations.Univalence
 open import Cubical.Core.Everything
 open import Cubical.Algebra.Group
 open import Cubical.Reflection.RecordEquiv
@@ -125,8 +127,8 @@ equalActions {G} {X} A B refl =  isoFunInjective (compIso GSetStrIsoΣ ActionIso
 --     p1-unit = fst (PathPΣ (snd (PathPΣ (snd p1'))))
 --     p2-unit = fst (PathPΣ (snd (PathPΣ (snd p2'))))
 
-postulate
-  lemme-prop : {G : Group ℓ} {X : Type ℓ} → isSet(GSetStr G X)
+lemme-prop : {G : Group ℓ} {X : Type ℓ} → isSet (GSetStr G X)
+lemme-prop = {!!}
 
 -- The reciprocal of an isomorphism is an isomorphism
 isGSetHomInv : {G : Group ℓ} {X : GSet ℓ G} {Y : GSet ℓ G} (f : GSetEquiv X Y) → IsGSetHom (str Y) (invEq (fst f)) (str X)
@@ -151,20 +153,21 @@ isGSetHomInv {ℓ} {G} {X} {Y} ((e , eEq) , eHom) = is-hom-h
       h (e (g ⋆₂ (h y))) ≡⟨ retEq (e , eEq) _ ⟩
       g ⋆₂ (h y) ∎
 
-postulate
-  -- We can calculate the induced structure of an equivalence
-  transport-* : {G : Group ℓ} {X Y : GSet ℓ G} {fEq : ⟨ X ⟩ ≃ ⟨ Y ⟩} →
-    subst (λ A → ⟨ G ⟩ → A → A) (ua fEq) (GSetStr._*_ (str X)) ≡ λ g y → (fst fEq) ((GSetStr._*_ (str X)) g ((invEq fEq) y))
-  -- transport-* {ℓ} {G} {X} {Y} {fEq} =
-  --   subst (λ A → ⟨ G ⟩ → A → A) (ua fEq) (_*x_) ≡⟨ {!funTypeTransp {A = Type ℓ} (λ A → ⟨ G ⟩) (λ A → A → A) {x = ⟨ X ⟩} {y = ⟨ Y ⟩} (ua fEq) (_*x_)!} ⟩
-  --   (λ g → subst (λ A → A → A) (ua fEq) (λ z → (subst (λ A → ⟨ G ⟩) (sym (ua fEq)) g) *x z)) ≡⟨ {!!} ⟩
-  --   (λ g → subst (λ A → A → A) (ua fEq) (λ z → g *x z)) ≡⟨ {!!} ⟩
-  --   (λ g y → subst (λ A → A) (ua fEq) (g *x (subst (λ A → A ) (sym (ua fEq)) y))) ≡⟨ {!!} ⟩
-  --   (λ g y → (fst fEq) (g *x ((invEq fEq) y))) ∎
-  --   where
-  --     _*x_ = GSetStr._*_ (str X)
-  --     f = fst fEq
-  --     h = fst (invEquiv fEq)
+-- We can calculate the induced structure of an equivalence
+transport-* : {G : Group ℓ} {X Y : GSet ℓ G} {fEq : ⟨ X ⟩ ≃ ⟨ Y ⟩} →
+  subst (λ A → ⟨ G ⟩ → A → A) (ua fEq) (GSetStr._*_ (str X)) ≡ λ g y → (fst fEq) ((GSetStr._*_ (str X)) g ((invEq fEq) y))
+transport-* {ℓ} {G} {X} {Y} {fEq} =
+  subst (λ A → ⟨ G ⟩ → A → A) (ua fEq) (_*x_)          ≡⟨ refl ⟩
+  transport (λ i → ⟨ G ⟩ → ua fEq i → ua fEq i) (_*x_) ≡⟨ fromPathP (funTypeTransp {A = Type ℓ} (λ A → ⟨ G ⟩) (λ A → A → A) {x = ⟨ X ⟩} {y = ⟨ Y ⟩} (ua fEq) (_*x_)) ⟩
+  (λ g → subst (λ A → A → A) (ua fEq) (λ z → (subst (λ A → ⟨ G ⟩) (sym (ua fEq)) g) *x z)) ≡⟨ {!!} ⟩
+  (λ g → subst (λ A → A → A) (ua fEq) (λ z → g *x z))  ≡⟨ {!!} ⟩
+  (λ g y → subst (λ A → A) (ua fEq) (g *x (subst (λ A → A ) (sym (ua fEq)) y))) ≡⟨ {!!} ⟩
+  {!!} ≡⟨ {!!} ⟩
+  (λ g y → (fst fEq) (g *x ((invEq fEq) y))) ∎
+  where
+    _*x_ = GSetStr._*_ (str X)
+    f = fst fEq
+    h = fst (invEquiv fEq)
 
 -- theorem : {G : Group ℓ} {X Y : GSet ℓ G} → (GSetEquiv X Y) ≃ (X ≡ Y)
 -- theorem {ℓ} {G} {X} {Y} = isoToEquiv e
@@ -248,5 +251,5 @@ postulate
 --     Iso.rightInv e p = cong ΣPathP (ΣPathP (ua-pathToEquiv (fst (PathPΣ p)) , {!!})
 --     Iso.leftInv e = {!!}
 
-postulate
-  theorem : {G : Group ℓ} {X Y : GSet ℓ G} → (GSetEquiv X Y) ≃ (X ≡ Y)
+theorem : {G : Group ℓ} {X Y : GSet ℓ G} → (GSetEquiv X Y) ≃ (X ≡ Y)
+theorem = {!!}
