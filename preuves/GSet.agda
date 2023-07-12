@@ -160,7 +160,7 @@ transport-* {ℓ} {G} {X} {Y} {fEq} =
   subst (λ A → ⟨ G ⟩ → A → A) (ua fEq) (_*x_)          ≡⟨ refl ⟩
   transport (λ i → ⟨ G ⟩ → ua fEq i → ua fEq i) (_*x_) ≡⟨ fromPathP (funTypeTransp {A = Type ℓ} (λ A → ⟨ G ⟩) (λ A → A → A) {x = ⟨ X ⟩} {y = ⟨ Y ⟩} (ua fEq) (_*x_)) ⟩
   (λ g → subst (λ A → A → A) (ua fEq) (λ z → (subst (λ A → ⟨ G ⟩) (sym (ua fEq)) g) *x z)) ≡⟨ {!!} ⟩
-  (λ g → subst (λ A → A → A) (ua fEq) (λ z → g *x z))  ≡⟨ {!!} ⟩
+  (λ g → subst (λ A → A → A) (ua fEq) (λ z → g *x z))  ≡⟨ fromPathP ((funTypeTransp {A = Type ℓ} (λ A → A) (λ A → A) {x = ⟨ X ⟩} {y = ⟨ Y ⟩} {!!} {!!})) ⟩
   (λ g y → subst (λ A → A) (ua fEq) (g *x (subst (λ A → A ) (sym (ua fEq)) y))) ≡⟨ {!!} ⟩
   {!!} ≡⟨ {!!} ⟩
   (λ g y → (fst fEq) (g *x ((invEq fEq) y))) ∎
@@ -169,87 +169,84 @@ transport-* {ℓ} {G} {X} {Y} {fEq} =
     f = fst fEq
     h = fst (invEquiv fEq)
 
--- theorem : {G : Group ℓ} {X Y : GSet ℓ G} → (GSetEquiv X Y) ≃ (X ≡ Y)
--- theorem {ℓ} {G} {X} {Y} = isoToEquiv e
---   where
-
---     _*y_ = GSetStr._*_ (str Y)
---     _*x_ = GSetStr._*_ (str X)
-
---     e : Iso (GSetEquiv X Y) (X ≡ Y)
---     Iso.fun e f = ΣPathP (ua (fst f) , toPathP (equalActions induced-structure (str Y) induced-action-≡-action))
---       where
-
---         h' = invEquiv (fst f)
---         h = invEq (fst f)
---         fFun = fst (fst f)
-
---         induced-structure : GSetStr G ⟨ Y ⟩
---         induced-structure = transport (λ i → GSetStr G (ua (fst f) i)) (str X)
-
---         _*i_ = GSetStr._*_ induced-structure
-
---         -- We want to show that *y ≡ *i.
-
---         -- We have shown that g *i y ≡ f (g *x (h y))
---         postulate
---           lem1 : (g : ⟨ G ⟩) (y : ⟨ Y ⟩) → g *i y ≡ fFun (g *x (h y))
-
---         -- Since h is a GSetHom,  f (g *x (h y)) ≣ f h(g *y y) ≡ g *y y
---         lem2 : (g : ⟨ G ⟩) (y : ⟨ Y ⟩) → (g *i y) ≡ (g *y y)
---         lem2 g y =
---           g *i y ≡⟨ lem1 g y ⟩
---           fFun ( g *x (h y)) ≡⟨ cong fFun (sym ((IsGSetHom.pres* (isGSetHomInv f)) g y)) ⟩
---           fFun ( h (g *y y)) ≡⟨ secEq (fst f) (g *y y) ⟩
---           g *y y ∎
-
---         -- By function extensionality we have *y ≡ *i
---         induced-action-≡-action : _*i_ ≡ _*y_
---         induced-action-≡-action = funExt  λ _ → funExt λ _ → (lem2 _ _)
-
---     Iso.inv e p = fEq , record { pres* = fHom }
---       where
---         -- p is a tuple containing :
---         --   · a path between underlying sets
---         --   · a path between their structures over the first path.
---         p-sig = PathPΣ p
-
---         -- that first path induces an equivalence
---         fEq : ⟨ X ⟩ ≃ ⟨ Y ⟩
---         fEq = pathToEquiv (fst p-sig)
---         f : ⟨ X ⟩ → ⟨ Y ⟩
---         f = fst fEq
-
---         hEq : ⟨ Y ⟩ ≃ ⟨ X ⟩
---         hEq = invEquiv fEq
---         h : ⟨ Y ⟩ → ⟨ X ⟩
---         h = fst hEq
-
---         -- the second tells us f respects structure.
---         fHom : (g : ⟨ G ⟩) (x : ⟨ X ⟩) → f (g *x x) ≡ g *y (f x)
---         fHom g x =
---           f (g *x x) ≡⟨ cong (λ z → f (g *x z)) x-y  ⟩
---           f (g *x (h y)) ≡⟨ (sym (lem1 g y)) ∙ lem3 g y ⟩
---           g *y y ≡⟨ refl ⟩
---           g *y (f x) ∎
---           where
-
---             y : ⟨ Y ⟩
---             y = f x
-
---             x-y : x ≡ h y
---             x-y = sym (secEq hEq x)
-
---             _*i_ : ⟨ G ⟩ → ⟨ Y ⟩ → ⟨ Y ⟩
---             _*i_ = GSetStr._*_ (transport (λ i → GSetStr G (fst (p-sig) i)) (str X))
-
---             postulate
---               lem1 : (g : ⟨ G ⟩) (y : ⟨ Y ⟩) → g *i y ≡ f (g *x (h y))
---               lem2 : _*i_ ≡ _*y_
---               lem3 : (g : ⟨ G ⟩) (y : ⟨ Y ⟩) → g *i y ≡ g *y y
-
---     Iso.rightInv e p = cong ΣPathP (ΣPathP (ua-pathToEquiv (fst (PathPΣ p)) , {!!})
---     Iso.leftInv e = {!!}
-
 theorem : {G : Group ℓ} {X Y : GSet ℓ G} → (GSetEquiv X Y) ≃ (X ≡ Y)
-theorem = {!!}
+theorem {ℓ} {G} {X} {Y} = isoToEquiv e
+  where
+
+    _*y_ = GSetStr._*_ (str Y)
+    _*x_ = GSetStr._*_ (str X)
+
+    e : Iso (GSetEquiv X Y) (X ≡ Y)
+    Iso.fun e f = ΣPathP (ua (fst f) , toPathP (equalActions induced-structure (str Y) induced-action-≡-action))
+      where
+
+        h' = invEquiv (fst f)
+        h = invEq (fst f)
+        fFun = fst (fst f)
+
+        induced-structure : GSetStr G ⟨ Y ⟩
+        induced-structure = transport (λ i → GSetStr G (ua (fst f) i)) (str X)
+
+        _*i_ = GSetStr._*_ induced-structure
+
+        -- We want to show that *y ≡ *i.
+
+        -- We have shown that g *i y ≡ f (g *x (h y))
+        postulate
+          lem1 : (g : ⟨ G ⟩) (y : ⟨ Y ⟩) → g *i y ≡ fFun (g *x (h y))
+
+        -- Since h is a GSetHom,  f (g *x (h y)) ≣ f h(g *y y) ≡ g *y y
+        lem2 : (g : ⟨ G ⟩) (y : ⟨ Y ⟩) → (g *i y) ≡ (g *y y)
+        lem2 g y =
+          g *i y ≡⟨ lem1 g y ⟩
+          fFun ( g *x (h y)) ≡⟨ cong fFun (sym ((IsGSetHom.pres* (isGSetHomInv f)) g y)) ⟩
+          fFun ( h (g *y y)) ≡⟨ secEq (fst f) (g *y y) ⟩
+          g *y y ∎
+
+        -- By function extensionality we have *y ≡ *i
+        induced-action-≡-action : _*i_ ≡ _*y_
+        induced-action-≡-action = funExt  λ _ → funExt λ _ → (lem2 _ _)
+
+    Iso.inv e p = fEq , record { pres* = fHom }
+      where
+        -- p is a tuple containing :
+        --   · a path between underlying sets
+        --   · a path between their structures over the first path.
+        p-sig = PathPΣ p
+
+        -- that first path induces an equivalence
+        fEq : ⟨ X ⟩ ≃ ⟨ Y ⟩
+        fEq = pathToEquiv (fst p-sig)
+        f : ⟨ X ⟩ → ⟨ Y ⟩
+        f = fst fEq
+
+        hEq : ⟨ Y ⟩ ≃ ⟨ X ⟩
+        hEq = invEquiv fEq
+        h : ⟨ Y ⟩ → ⟨ X ⟩
+        h = fst hEq
+
+        -- the second tells us f respects structure.
+        fHom : (g : ⟨ G ⟩) (x : ⟨ X ⟩) → f (g *x x) ≡ g *y (f x)
+        fHom g x =
+          f (g *x x) ≡⟨ cong (λ z → f (g *x z)) x-y  ⟩
+          f (g *x (h y)) ≡⟨ (sym (lem1 g y)) ∙ lem3 g y ⟩
+          g *y y ≡⟨ refl ⟩
+          g *y (f x) ∎
+          where
+
+            y : ⟨ Y ⟩
+            y = f x
+
+            x-y : x ≡ h y
+            x-y = sym (secEq hEq x)
+
+            _*i_ : ⟨ G ⟩ → ⟨ Y ⟩ → ⟨ Y ⟩
+            _*i_ = GSetStr._*_ (transport (λ i → GSetStr G (fst (p-sig) i)) (str X))
+
+            postulate
+              lem1 : (g : ⟨ G ⟩) (y : ⟨ Y ⟩) → g *i y ≡ f (g *x (h y))
+              lem2 : _*i_ ≡ _*y_
+              lem3 : (g : ⟨ G ⟩) (y : ⟨ Y ⟩) → g *i y ≡ g *y y
+
+    Iso.rightInv e p = cong ΣPathP (ΣPathP (ua-pathToEquiv (fst (PathPΣ p)) , {!!}))
+    Iso.leftInv e = {!!}

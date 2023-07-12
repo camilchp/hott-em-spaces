@@ -10,5 +10,7 @@ tmp/
 *.gz
 *.pdf
 *.agdai
+*.ptb
+*.out
 
 /rapport/_region_.tex

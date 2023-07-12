@@ -1,0 +1,78 @@
+\documentclass[a4paper]{report}
+
+%Minimum packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{babel}
+\usepackage[top=1.5cm, bottom=2cm, left=2cm, right=2cm]{geometry}
+\usepackage{graphicx}
+\graphicspath{{../images/}}
+\usepackage[backend=biber]{biblatex}
+\usepackage{tikz,tkz-tab}
+
+% Meta content
+\title{Minimal Construction of Eilenberg-MacLane spaces in HoTT}
+\author{Camil Champin}
+\date{\today}
+\pagestyle{headings}
+\makeatletter
+\let\thetitle\@title
+\let\theauthor\@author
+\let\thedate\@date
+\makeatother
+
+%Color definitions
+\definecolor{dark}{RGB}{22,75,94}
+\definecolor{lightgrey}{rgb}{.90,.90,.90}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\begin{document}
+\begin{titlepage}
+  \begin{minipage}{0.5\textwidth}
+    \begin{flushleft} \includegraphics[width=0.5\textwidth]{logo_ensl.png}
+    \end{flushleft}
+  \end{minipage}
+  \begin{minipage}{0.5\textwidth}
+
+    \begin{flushright} \includegraphics[width=0.4\textwidth]{logo_lix}
+    \end{flushright}
+
+  \end{minipage}\\[.5 cm]
+
+  \begin{center}
+        {\Large
+        École Normale Supérieure de Lyon, Computer Science Department}\\[1.5 cm]
+        \textsc{\LARGE Research Internship Report}
+    \\[.5 cm]
+    \large at the Laboratoire Informatique de l'X\\[.2 cm]
+    12 june 2023 - 21 jully 2023, 6 weeks\\[1 cm]
+    \rule{\linewidth}{0.2 mm} \\[1 cm]
+    { \huge \bfseries \thetitle}\\[.7 cm]
+    \rule{\linewidth}{0.2 mm} \\[1 cm]
+        {\Large Camil Champin}\\[.2 cm]
+        {\large L3 Computer Science Department, ENS de Lyon}\\[1 cm]
+    \end{center}
+    \begin{minipage}{0.5\textwidth}
+      \begin{flushleft} \large
+            \textbf{LIX}\\
+            1 rue Honoré d'Estienne d'Orves\\
+            Bâtiment Alan Turing\\
+            Campus de l'École Polytechnique\\
+            91120 Palaiseau\\
+            France\\
+        \end{flushleft}
+      \end{minipage}
+      \begin{minipage}{0.5\textwidth}
+        \begin{flushright} \large
+          \textbf{Supervisors} \\
+            Emile Oléon\\
+            Samuel Mimram\\
+          \end{flushright}
+        \end{minipage}\\[2 cm]
+        \begin{center} Version du \thedate
+        \end{center}
+\end{titlepage}
+\end{document}
