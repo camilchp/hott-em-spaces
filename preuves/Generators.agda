@@ -13,15 +13,11 @@ open import Cubical.Data.Fin
 open import Cubical.Data.Nat
 open import Cubical.HITs.PropositionalTruncation
 
-open import GSet
-
-
 private
   variable
     ℓ : Level
 
 module _ (G : Group ℓ) (n : ℕ) (g : Fin n → ⟨ G ⟩) where
-  open GroupStr (str G)
 
   Free_n : Group _
   Free_n = freeGroupGroup (Fin n)
@@ -31,12 +27,12 @@ module _ (G : Group ℓ) (n : ℕ) (g : Fin n → ⟨ G ⟩) where
   prodHom = Cubical.HITs.FreeGroup.rec g
   prod = (fst prodHom)
 
-  generate-strong : Type ℓ
-  generate-strong = (g : ⟨ G ⟩) → Σ ⟨ Free_n ⟩ (λ x → prod x ≡ g)
+  generateStrong : Type ℓ
+  generateStrong = (g : ⟨ G ⟩) → Σ ⟨ Free_n ⟩ (λ x → prod x ≡ g)
 
-  generate-weak : Type ℓ
-  generate-weak = (g : ⟨ G ⟩) → ∃ ⟨ Free_n ⟩ (λ x → prod x ≡ g)
+  generateWeak : Type ℓ
+  generateWeak = (g : ⟨ G ⟩) → ∃ ⟨ Free_n ⟩ (λ x → prod x ≡ g)
 
   postulate
     -- This is a consequence of the axiom of choice
-    weak-generation : ∥ generate-strong ∥₁ ≃ generate-weak
+    weakGeneration : ∥ generateStrong ∥₁ ≃ generateWeak

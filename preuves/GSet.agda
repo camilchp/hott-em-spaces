@@ -97,14 +97,17 @@ fst (idGSetEquiv {X = X}) = idEquiv ⟨ X ⟩
 snd idGSetEquiv = makeIsGSetHom λ _ _ → refl
 
 -- Actions that coincide are equal
-equalActions : {G : Group ℓ} {X : Type ℓ} (A B : GSetStr G X) → A .GSetStr._*_ ≡ B .GSetStr._*_ → A ≡ B
-equalActions {G} {X} A B refl =  isoFunInjective (compIso GSetStrIsoΣ ActionIsoΣ) A B
+equalActions : {G : Group ℓ} {X : Type ℓ} (ϕ ψ : Action G X) → ϕ .Action._*_ ≡ ψ .Action._*_ → ϕ ≡ ψ
+equalActions {G} {X} ϕ ψ refl =  isoFunInjective  ActionIsoΣ ϕ ψ
   (ΣPathP (refl ,
     ΣPathP (isPropIsSet _ _ ,
-      ΣPathP ( (funExt (λ _ → toPathP (B .GSetStr.is-set _ _ _ _))) ,
+      ΣPathP ( (funExt (λ _ → toPathP (ψ .Action.is-set _ _ _ _))) ,
       funExt λ _ →
         funExt λ _ →
-          funExt λ _ → toPathP (B .GSetStr.is-set _ _ _ _)))))
+          funExt λ _ → toPathP (ψ .Action.is-set _ _ _ _)))))
+
+equalGSetStructures : {G : Group ℓ} {X : Type ℓ} (A B : GSetStr G X) → A .GSetStr._*_ ≡ B .GSetStr._*_ → A ≡ B
+equalGSetStructures A B p = isoFunInjective GSetStrIsoΣ A B (equalActions _ _ p)
 
 -- -- (GSetStr G X) is a set (the set of actions of G on X)
 -- IsSetGSetStr : {G : Group ℓ} {X : Type ℓ} → isSet(GSetStr G X)
@@ -177,7 +180,7 @@ theorem {ℓ} {G} {X} {Y} = isoToEquiv e
     _*x_ = GSetStr._*_ (str X)
 
     e : Iso (GSetEquiv X Y) (X ≡ Y)
-    Iso.fun e f = ΣPathP (ua (fst f) , toPathP (equalActions induced-structure (str Y) induced-action-≡-action))
+    Iso.fun e f = ΣPathP (ua (fst f) , toPathP (equalGSetStructures induced-structure (str Y) induced-action-≡-action))
       where
 
         h' = invEquiv (fst f)
