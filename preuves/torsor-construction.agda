@@ -1,4 +1,4 @@
-{-# OPTIONS --cubical #-}
+{-# OPTIONS --cubical --allow-unsolved-metas #-}
 
 open import Cubical.Foundations.Everything
 open import Cubical.Foundations.Equiv
@@ -18,7 +18,7 @@ private
   variable
     ℓ : Level
 
-module _ (G : Group ℓ) where
+module delooping (G : Group ℓ) where
 
   open GroupStr (snd G)
 
@@ -33,7 +33,7 @@ module _ (G : Group ℓ) where
 
   -- On appelle le GSet correspondant "torseur principal de G"
   PG : GSet ℓ G
-  PG = ⟨ G ⟩ , gsetsr left-action
+  PG = ⟨ G ⟩ , gsetstr left-action
 
   -- La composante connexe de PG dans les GSets est appelée BG, "espace classifiant de G".
   BG : Pointed _

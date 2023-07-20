@@ -17,7 +17,8 @@ private
   variable
     ℓ : Level
 
-module _ (G : Group ℓ) (n : ℕ) (g : Fin n → ⟨ G ⟩) where
+-- TODO: take stuff out of the module
+module Generation (G : Group ℓ) (n : ℕ) (g : Fin n → ⟨ G ⟩) where
 
   Free_n : Group _
   Free_n = freeGroupGroup (Fin n)

@@ -25,7 +25,7 @@ unquoteDecl ActionIsoΣ = declareRecordIsoΣ ActionIsoΣ (quote Action)
 
 record GSetStr (G : Group ℓ) (X : Type ℓ) : Type ℓ where
   constructor
-    gsetsr
+    gsetstr
   field
     ϕ : Action {ℓ} G X
 
@@ -134,8 +134,8 @@ lemme-prop : {G : Group ℓ} {X : Type ℓ} → isSet (GSetStr G X)
 lemme-prop = {!!}
 
 -- The reciprocal of an isomorphism is an isomorphism
-isGSetHomInv : {G : Group ℓ} {X : GSet ℓ G} {Y : GSet ℓ G} (f : GSetEquiv X Y) → IsGSetHom (str Y) (invEq (fst f)) (str X)
-isGSetHomInv {ℓ} {G} {X} {Y} ((e , eEq) , eHom) = is-hom-h
+isGSetHomInv : {G : Group ℓ} {X : GSet ℓ G} {Y : GSet ℓ G} (f : ⟨ X ⟩ ≃ ⟨ Y ⟩) → IsGSetHom (str X) (fst f) (str Y) → IsGSetHom (str Y) (invEq f) (str X)
+isGSetHomInv {ℓ} {G} {X} {Y} (e , eEq) eHom = is-hom-h
   where
     h : ⟨ Y ⟩ → ⟨ X ⟩
     h = invEq (e , eEq)
@@ -202,7 +202,7 @@ theorem {ℓ} {G} {X} {Y} = isoToEquiv e
         lem2 : (g : ⟨ G ⟩) (y : ⟨ Y ⟩) → (g *i y) ≡ (g *y y)
         lem2 g y =
           g *i y ≡⟨ lem1 g y ⟩
-          fFun ( g *x (h y)) ≡⟨ cong fFun (sym ((IsGSetHom.pres* (isGSetHomInv f)) g y)) ⟩
+          fFun ( g *x (h y)) ≡⟨ cong fFun (sym ((IsGSetHom.pres* (isGSetHomInv (fst f) (snd f))) g y)) ⟩
           fFun ( h (g *y y)) ≡⟨ secEq (fst f) (g *y y) ⟩
           g *y y ∎
 
