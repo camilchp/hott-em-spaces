@@ -1,4 +1,4 @@
-{-# OPTIONS --cubical --allow-unsolved-metas #-}
+{-# OPTIONS --cubical #-}
 
 open import Cubical.Foundations.Everything
 open import Cubical.Foundations.Prelude
