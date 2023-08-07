@@ -24,6 +24,7 @@
 \usepackage{graphicx}
 \graphicspath{ {../images/} }
 
+\usepackage{multicol}
 
 \usepackage{caption}
 \usepackage{subcaption}
@@ -32,30 +33,37 @@
 \usepackage{amssymb}
 \usepackage{bbold}
 \usepackage[french]{babel}
+\usepackage{csquotes}
 % \usepackage[autolanguage]{numprint} % for the \nombre command
 \usepackage{hyphenat}
 % \usepackage{minted}
 % \setminted[ocaml]{style=vs}
 
 \usepackage{tikz}
+%\usepackage{tikz-cd}
 \usetikzlibrary[cd]
+\usetikzlibrary{matrix, arrows}
 
 % Operators -------------------------------
 
 \let\loop\relax
+\DeclareMathOperator{\ua}{ua}
 \DeclareMathOperator{\loop}{loop}
 \DeclareMathOperator{\transp}{transp}
 \DeclareMathOperator{\inv}{inv}
 \DeclareMathOperator{\id}{id}
 \DeclareMathOperator{\isconnected}{isConnected}
+\DeclareMathOperator{\gsetstr}{GSetStr}
 \DeclareMathOperator{\isprop}{isProp}
 \DeclareMathOperator{\isset}{isSet}
 \DeclareMathOperator{\isgroupoid}{isGroupoïd}
+\DeclareMathOperator{\isconn}{isConn}
 \DeclareMathOperator{\isequiv}{isEquiv}
 \DeclareMathOperator{\pathtoequiv}{pathToEquiv}
 \let\Pr\relax
 \DeclareMathOperator{\Pr}{Pr}
 \DeclareMathOperator{\shape}{shape}
+\DeclareMathOperator{\base}{base}
 \DeclareMathOperator{\gset}{G-Set}
 \DeclareMathOperator{\torsor}{Torsor}
 \DeclareMathOperator{\aut}{Aut}
@@ -88,6 +96,8 @@
 \title{A minimal construction of Eilenberg-MacLane spaces in HoTT}
 
 \begin{document}
+
+\tableofcontents
 
 \section{Introduction to the Problem : Eilenberg-MacLane Spaces}
 
@@ -148,9 +158,17 @@ Following this interpretation, the type of equalities of a point $a$ in a type $
 
 \[\Omega(A , a_0) :\equiv (a_0 = a_0)\]
 
+\subsection{Higher Inductive Types}
+
+HoTT allows us to define types inductively (like the natural numbers or lists), but it also allows us to define what are called \emph{Higher Inductive Types} (HITs). These are types in which both inhabitants and paths (including higher paths) are inductively defined. To understand this report, all that is needed is the following intuition: a HIT is an inductive type in which the higher structure is explicitly defined. The most common example is the circle $\mathcal{S}^{1}$: it is defined with a point ($\base : \mathcal{S}^{1}$) and a path ($\loop : \base = \base$).
+
+INSERT DRAWING
+
+One can show that $\loop$ is not equal to $\refl$, or to $\loop \cdot \loop$, etc\ldots This way, one shows that $\pi_{1}(\mathcal{S}^{1}) = \mathbb{Z}$.
+
 \subsection{Type Levels}
 
-We've just seen how two inhabitants of $(x = y)$ may be equal, but we may like to work with types in which all equalities are unique. Let us generalize and formalize this idea:
+We've just seen how two inhabitants of $(x = y)$ may be equal in several different ways, but we may like to work with types in which all equalities are unique. Let us generalize and formalize this idea:
 
 \begin{definition}
   We say a type $A$ is a \emph{Proposition} if all of it's inhabitants are equal.
@@ -184,25 +202,25 @@ The identity function on a given type is obviously an equivalence, therefor by p
 \[\pathtoequiv : (A =_{\mathcal{U}} B) \to (A \simeq B)\]
 
 \begin{axiom}[Univalence]
-  The function $\pathtoequiv$ is an equivalence. Namely:
+  The function $\pathtoequiv$ is an equivalence. Its inverse is $\ua$. Namely:
   \[(A = B) \simeq (A \simeq B)\]
 \end{axiom}
 
 This axiom, introduced by Voevodsky in 2006, is one of the key features of Homotopy Type Theory. One powerful application of this axiom is that if two algebraic structures are isomorphic, they can be identified. In classical logic mathematicians often consider these structures `up to isomorphism' and identify them seamlessly, univalence allows this formally. Let us study an example I formalized during my internship with the Agda proof-assistant: the structure of a G-set.
 
-\subsection{Transport}
+\subsection{Transport}\label{transport}
 
 One subtlety with propositionnal equality is dealing with dependant types: if $P$ is a proposition over a type $X$, and $x,y : X$, even if $(x = y)$ is inhabited, $(P(x) = P(y))$ does not make any sense : there is no reason for $P(x)$ and $P(y)$ to be of the same type! However, path induction allows us to construct a \emph{transport}:
 
-\[\transp : \prod_{p : (x = y)} P(x) \to P(y) \]
+\[\transp^{P} : \prod_{p : (x = y)} P(x) \to P(y) \]
 
-Which reads: `for any path $p$ from $x$ to $y$, we can construct a function $p^{*}$ that maps from $P(x)$ to $P(y)$'. It follows that $P(x)$ and $P(y)$ are logically equivalent, and so equality behaves as expected. Furthermore, one can show that equality for dependant pairs has a convenient shape:
+Which reads: `for any path $p$ from $x$ to $y$, we can construct a function $p^{*}$ that maps from $P(x)$ to $P(y)$'. It follows that $P(x)$ and $P(y)$ are logically equivalent, and so equality behaves as expected. In fact, $\transp^{P}(p)$ is always an equivalence with inverse $\transp^{P}(p^{-1})$. Furthermore, one can show that equality for dependant pairs has a convenient shape:
 
 \[(a, b) = (a', b') \simeq \sum_{p : a = a'}p^*(b) = b'\]
 
 Which reads: `Two objects with structure are equal if and only if the objects are equal, and the transported structure of the first is equal to the structure of the second'. (Note that for non-dependant pairs one only needs to show that the two components are equal).
 
-\section{An Example of Algebraic Structures in HoTT:\  G-Sets}
+\section{An Example of Algebraic Structures in HoTT:\  $G$-Sets}
 
 Before we dive in, a few notes on HoTT in Agda. The cubical library is the most commonly used implementation of HoTT in the Agda proof assistant (which is based on classical dependant type theory). It implements a specific branch called Cubical HoTT, which uses a formal interval $I$ which behaves like $[0;1]$, and is used to build paths. The cubical library has many results already formalized and checked in agda. I will mark those that I have checked in agda during my internship with the label (agd*), and those that I have proved on paper (pap*). All proofs are available in the appendix.
 
@@ -212,39 +230,98 @@ Before we dive in, a few notes on HoTT in Agda. The cubical library is the most 
 Groups in HoTT are defined as a tuple (nested sum-type):
 
 \begin{itemize}
+\begin{minipage}[c][3.2cm]{0.3\linewidth}
     \item $G : \mathcal{U}$
     \item $1_{G} : G$
     \item $\mu : G \to G \to G$
     \item $\iota : G \to G$
-\end{itemize}
-
-As well as proofs that:
-
-\begin{itemize}
+\end{minipage}
+\begin{minipage}[c][3.2cm]{0.6\linewidth}
     \item $G$ is a set ($\isset(G)$)
     \item $\mu$ is associative ($\prod_{x,y,z : G} \mu(x,(\mu(y,z))) = \mu(\mu(x,y),z)$)
     \item $1_{G}$ is a neutral element (both left and right)
     \item $\iota(g)$ is an inverse of $g$ (both left and right)
+\end{minipage}
 \end{itemize}
 
 We will often note G both the carrier of the group (the underlying set) and the group itself, and $\_\cdot\_$ the group multiplication. We can define the type of all groups to be the sum-type of types in $\mathcal{U}$ along with a $\mu$ and $\iota$, that satisfy these conditions.
 
 \subsection{Group Actions and G-Sets}
 
-A Group Action of $G \curvearrowright X$ is a tuple :
+A Group Action of $G \curvearrowright X$ is a tuple:
 
 \begin{itemize}
+\begin{minipage}[c][3cm]{0.3\linewidth}
         \item $\mu : G \to X \to X$
-\end{itemize}
-Along with proofs of:
-\begin{itemize}
+\end{minipage}
+\begin{minipage}[c][3cm]{0.6\linewidth}
         \item $\displaystyle\prod_{x : X} \mu(1_{G}, x) = x $
         \item $\displaystyle\prod_{g_1, g_2 : G}\prod_{x : X} \mu(g_1 \cdot g_2, x) = \mu(g_1, \mu(g_2,x)) $
         \item $\isset(X)$
+\end{minipage}
 \end{itemize}
 
-And a $G$-Set is a carrier $X : \mathcal{U}$ and an action of $G$ on $X$. (Note that $X$ must therefore be a set). A morphism of $G$-Sets $X$ and $Y$ is a function between carriers $f : X \to Y$ that respects the actions : $f(\mu_{X}(g,x)) = \mu_{Y}(g,f(x))$. When $f$ is an equivalence, we call it an $G$-Set isomorphism. Let us show that isomorphic $G$-Sets can be identified.
+And a $G$-Set is a carrier $X : \mathcal{U}$ and an action of $G$ on $X$ (called a `$G$-Set structure'). Note that $X$ must therefore be a set. A \emph{morphism} of $G$-Sets $X$ and $Y$ is a function between carriers that respects the actions:
+
+\begin{gather*}
+f : X \to Y \\
+f(\mu_{X}(g,x)) = \mu_{Y}(g,f(x))
+\end{gather*}
+
+When $f$ is an equivalence, we call it an $G$-Set \emph{isomorphism}.
 
 \subsection{From Isomorphisms to Paths}
+
+We want to show that two isomorphic $G$-Sets can be identified. That is, we want an equivalence between the type $(X = Y)$, and the type of $G$-Set isomorphisms of $X$ to $Y$. Let us exhibit such an equivalence. This will come in handy when we get to constructing Eilenberg-MacLane spaces, and will help us get a feel for how univalence is used in practice.
+
+\paragraph{Transporting structure:}
+
+If $e$ is a bijection between carriers $X$ and $Y$, it is natural that $e$ induces a $G$-Set structure on $Y$. In HoTT this is immidiatley given by univalence because $e$ gives us a path that allows us to transport the $G$-Set structure of $X$ onto $Y$:
+
+\[\transp^{\gsetstr}(\ua(e)) : \gsetstr(X) \to \gsetstr(Y)\]
+
+We can actually calculate this specific transport (*agd).
+
+Most notably, the transported action is:
+
+\[g,y \mapsto e(\mu_{X}(g , e^{-1}(y)))\]
+
+As for the proofs, they are all functions towards identity types on sets, thus functions towoards propositions. This means they are themselves proposition (this is simple to prove). Therefor there is only one choice for these proofs: the transported ones are equal to the ones from $Y$'s $G$-Set structure.
+
+\paragraph{Building an equivalence:} Suppose we are given a path from $X$ to $Y$ as $G$-Sets. We have seen (\ref{transport}) that this type is equivalent to the type of pairs of a path between the carriers and a path between the transported structure of $X$ and the structure of $Y$. The first induces an equivalence $e$ (by $\pathtoequiv$) and the second is of type:
+
+\[\prod_{g : G} \prod_{y : Y} e(\mu_{X}(g, e^{-1}(y))) = \mu_{Y}(g, y)\]
+
+It is not too hard to see that this is equivalent to $e$ respecting the actions of $G$ (*agd). Therefor the type of paths from $X$ to $Y$ is equivalent to the type of equivalences between carriers that respect the actions, i.e.\ the type of isomorphisms.
+
+\section{Truncation and Connectedness}
+
+\subsection{$n$-truncated types}
+
+When considering a given type, one might wonder what that type would look like if it was to be truncated to an $n$-type. That is, if we `forgot' all of the higher structure. For instance we want the $0$-truncation (or set-truncation) of $A$ (denoted $\|A\|_{0}$) to have `the same inhabitants' as $A$ with all paths contracted. Similarly, the propositional truncation of $A$ ($\|A\|_{-1}$) will be $\mathbb{1}$ if $A$ is inhabited and $\mathbb{0}$ if it is not. We define these objects with a universal property:
+
+INSERT COMMUTING DIAGRAM
+
+Where $X_{n}$ is an $n$-type. This reads `when mapping out of $\|A\|_{n}$ to an $n$-type, it suffices to map out of A. For example, when one wants to prove a proposition using an inhabitant of $\|A\|_{-1}$, one may assume he is given a proper inhabitant of $A$.
+
+\subsection{Connected Types}
+
+We've seen that a type $A$ is a proposition if all of its inhabitants are equal.
+
+\[\isprop(A) :\equiv \prod_{x,y : A} (x = y)\]
+
+But what if $(x = y)$ is merely inhabited ? We then say that $A$ is \emph{connected}:
+
+\[\isconn(A) :\equiv \prod_{x,y : A} \|x = y \|_{-1}\]
+
+Here the topological interpretation helps. The circle $\mathcal{S}^{1}$ is an example of a type that is connected but not a proposition.
+
+\subsection{Connected Component}
+
+We define the connected component of a pointed type $(A,a_0)$:
+
+\[\baut(A,a_0) :\equiv \sum_{x : A} (x = a_0)\]
+
+It is fairly intuitive that this type is connected (*agd), and that $\Omega(A,a_0) = \Omega(\baut(A,a_0))$. (The loop space of $a_0$ is its loop space in its connected component) (*agd). We are now ready to construct Eilenberg-MacLane spaces!
 
 \end{document}
