@@ -103,15 +103,15 @@
 
 \subsection{Reminders on Topology}
 
-Let $A$ be a topological space. We call continuous functions from $[0;1]$ to $A$ the \emph{paths of $A$}. If $x,y$ are points of $A$, we say that $\gamma : [0;1] \to A$ is a path from $x$ to $y$ if $\gamma(0) = x$ and $\gamma(1) = y$. Paths from $x$ to $x$ are called the \emph{loops} of $x$. A homotopy between two paths $p$ and $q$ is a continuous family of paths $F_{t} : [0;1] \to [0;1] \to A$ such that $F_{0} = p$ and $F_{1} = q$.
+Let $A$ be a topological space. We call continuous functions from $[0;1]$ to $A$ the \emph{paths of $A$}. If $x,y$ are points of $A$, we say that $\gamma : [0;1] \to A$ is a path from $x$ to $y$ if $\gamma(0) = x$ and $\gamma(1) = y$. Paths from $x$ to $x$ are called the \emph{loops} of $x$. A homotopy between two paths $p$ and $q$ is a path between paths, which one can think of as a continuous family of paths $F_{t} : [0;1] \to [0;1] \to A$ such that $F_{0} = p$ and $F_{1} = q$.
 
 INSERT DRAWING
 
 \subsection{The Fundamental Group}
 
-Let us consider the loops of a point $x$ in $A$. We can concatenate paths (we need only to strecth the input interval back to $[0;1]$), and take the inverse of any path (the path that goes backwards through the same points). It is a fundemental result in algebraic topology that these paths considered up to homotopy form a group. Furthermore, the group is isomorphic for any $x$ in $A$. We call this group the \emph{fundemental group} of $A$, which we denote $\pi_{1}(A)$.
+Let us consider the loops of a point $x$ in $A$. We can concatenate paths (we need only to stretch the input interval back to $[0;1]$), and take the inverse of any path (the path that goes backwards through the same points). It is a fundamental result in algebraic topology that these paths considered up to homotopy form a group. Furthermore if $A$ is path connected, the group is isomorphic for any choice of $x$ in $A$. We call this group (or rather family of groups) the \emph{fundemental group} of $A$, which we denote $\pi_{1}(A)$.
 
-One can also define $\pi_{2}(A)$ to be the group of homotopies between loops of any $x$ in $A$, up to homotopies of homotopies, and so on for any $\pi_{n}$. ($\pi_{0}(A)$ is the set of connected components of $A$).
+One can also define $\pi_{2}(A)$ to be the group of homotopies between loops of any $x$ in $A$, up to homotopies of homotopies (This is the fundamental group of the space of paths from $x$ to $x$) and so on for any $\pi_{n}$. ($\pi_{0}(A)$ is the set of connected components of $A$).
 
 \subsection{Eilenberg-MacLane Spaces}
 
@@ -131,7 +131,7 @@ The point of this internship was to study how such a space can be constructed us
 
 \subsection{What is Homotopy Type Theory?}
 
-Types can be thought of as set-like collections, with inhabitants $x : A$ being seen as `elements' of a type. Types can be broader than sets though, one can write the type of all groups for example. To avoid Russel's paradox, we consider every type to be an element of a broader type called a universe, often denoted $\mathcal{U}$. We know from the Curry-Howard correspondance that we can also see them as propositions, with inhabitants being seen as proofs. Functions for example are proofs of implications $A \to B$, in the sense that they map proofs of $A$ to proofs of $B$. Homotopy type theory sees types as topological spaces, and inhabitants as points of that space.
+Types can be thought of as set-like collections, with inhabitants $x : A$ being seen as `elements' of a type. Types can be broader than sets though, one can write the type of all groups for example. To avoid Russel's paradox, we consider every type to be an inhabitant of a broader type called a universe, often denoted $\mathcal{U}$, rather than allowing a type to inhabit itself. We know from the Curry-Howard correspondance that we can also see them as propositions, with inhabitants being seen as proofs. Functions for example are proofs of implications $A \to B$, in the sense that they map proofs of $A$ to proofs of $B$. Homotopy type theory sees types as topological spaces, and inhabitants as points of that space.
 
 
 \subsection{Reminders on Dependant Types}
@@ -160,7 +160,7 @@ Following this interpretation, the type of equalities of a point $a$ in a type $
 
 \subsection{Higher Inductive Types}
 
-HoTT allows us to define types inductively (like the natural numbers or lists), but it also allows us to define what are called \emph{Higher Inductive Types} (HITs). These are types in which both inhabitants and paths (including higher paths) are inductively defined. To understand this report, all that is needed is the following intuition: a HIT is an inductive type in which the higher structure is explicitly defined. The most common example is the circle $\mathcal{S}^{1}$: it is defined with a point ($\base : \mathcal{S}^{1}$) and a path ($\loop : \base = \base$).
+Just like Martin-Löf type theory, HoTT allows us to define types inductively (like the natural numbers or lists), but it also allows us to define what are called \emph{Higher Inductive Types} (HITs). These are types in which both inhabitants and paths (including higher paths) are inductively defined. To understand this report, all that is needed is the following intuition: a HIT is an inductive type in which the higher structure is explicitly defined. The most common example is the circle $\mathcal{S}^{1}$: it is defined with a point ($\base : \mathcal{S}^{1}$) and a path ($\loop : \base = \base$).
 
 INSERT DRAWING
 
@@ -323,5 +323,9 @@ We define the connected component of a pointed type $(A,a_0)$:
 \[\baut(A,a_0) :\equiv \sum_{x : A} (x = a_0)\]
 
 It is fairly intuitive that this type is connected (*agd), and that $\Omega(A,a_0) = \Omega(\baut(A,a_0))$. (The loop space of $a_0$ is its loop space in its connected component) (*agd). We are now ready to construct Eilenberg-MacLane spaces!
+
+\section{The Torsor Construction}
+
+
 
 \end{document}
