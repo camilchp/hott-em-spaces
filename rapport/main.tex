@@ -48,13 +48,24 @@
 
 \let\loop\relax
 \DeclareMathOperator{\ua}{ua}
+\DeclareMathOperator{\product}{prod}
+\DeclareMathOperator{\decomp}{decomp}
 \DeclareMathOperator{\loop}{loop}
+\DeclareMathOperator{\fin}{Fin}
+\DeclareMathOperator{\comp}{comp}
+\DeclareMathOperator{\free}{Free}
 \DeclareMathOperator{\transp}{transp}
 \DeclareMathOperator{\inv}{inv}
 \DeclareMathOperator{\id}{id}
 \DeclareMathOperator{\isconnected}{isConnected}
+\DeclareMathOperator{\iscontr}{isContr}
+\DeclareMathOperator{\isset}{isSet}
 \DeclareMathOperator{\gsetstr}{GSetStr}
+\DeclareMathOperator{\gset}{GSet}
+\DeclareMathOperator{\action}{Action}
+\DeclareMathOperator{\gsetiso}{GSetIso}
 \DeclareMathOperator{\isprop}{isProp}
+\let\isset\relax
 \DeclareMathOperator{\isset}{isSet}
 \DeclareMathOperator{\isgroupoid}{isGroupoïd}
 \DeclareMathOperator{\isconn}{isConn}
@@ -64,7 +75,6 @@
 \DeclareMathOperator{\Pr}{Pr}
 \DeclareMathOperator{\shape}{shape}
 \DeclareMathOperator{\base}{base}
-\DeclareMathOperator{\gset}{G-Set}
 \DeclareMathOperator{\torsor}{Torsor}
 \DeclareMathOperator{\aut}{Aut}
 \DeclareMathOperator{\code}{code}
@@ -77,6 +87,9 @@
 \DeclareMathOperator{\groupa}{Group}
 \let\hom\relax
 \DeclareMathOperator{\hom}{Hom}
+\DeclareMathOperator{\commutingsquares}{CommSquares}
+
+
 
 % \addbibresource{bibliographie.bib}
 
@@ -84,8 +97,8 @@
 
 %\renewcommand{\labelitemi}{$\bullet$}
 
-\newtheorem{definition}{Définition}[section]
-\newtheorem{theorem}{Théorème}[section]
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}{Theorem}[section]
 \newtheorem{axiom}{Axiom}[section]
 \newtheorem{proposition}[definition]{Proposition}
 \newtheorem{lemme}[definition]{Lemme}
@@ -98,6 +111,10 @@
 \begin{document}
 
 \tableofcontents
+
+\break
+
+To put this report into context: I was advised by my tutor and supervisors to do some reading on algabraic topology and Homotopy Type Theory before the internship. This is why in this report, a lot of time is spent on introducing basic notions from these fields. However once the internship started, the objective was fairly clear: understanding how Eilenberg-MacLane spaces are built in HoTT, proving this construction with the Agda proof-assistant. Then formalizing a more compact construction, and proving it. This is why there is not much more bibliography. Without further adue, let us introduce the basic concepts.
 
 \section{Introduction to the Problem : Eilenberg-MacLane Spaces}
 
@@ -179,11 +196,11 @@ We've just seen how two inhabitants of $(x = y)$ may be equal in several differe
   We say that a type is a \emph{Set} if all of it's identity types are propositions. We say that a type is a \emph{Groupoïd} if all of it's identity types are sets. In general we call an \emph{$n$-type} any type who's identity types at level $n$ are propositions (A proposition is called an $(-1)$-type).
 \end{definition}
 
-Note that a proposition is always a set, which is always a groupoïd, etc\ldots. In fact, seeing this allows one to show that $\isprop(A)$ is itself a proposition.
+Finally a type is said to be contractible if it is an inhabited proposition. Note that a proposition is always a set, which is always a groupoïd, etc\ldots. In fact, seeing this allows one to show that $\isprop(A)$ is itself a proposition (so are $\iscontr$, $\isset$, etc\ldots).
 
 INSERT DRAWING
 
-\subsection{Equivalences and  Univalence Axiom}
+\subsection{Equivalences and  the Univalence Axiom}
 
 \begin{definition}
   A function $f : A \to B$ is said to be an \emph{equivalence} if it has an left and a right inverse:
@@ -270,7 +287,7 @@ f(\mu_{X}(g,x)) = \mu_{Y}(g,f(x))
 
 When $f$ is an equivalence, we call it an $G$-Set \emph{isomorphism}.
 
-\subsection{From Isomorphisms to Paths}
+\subsection{From Isomorphisms to Paths} \label{iso}
 
 We want to show that two isomorphic $G$-Sets can be identified. That is, we want an equivalence between the type $(X = Y)$, and the type of $G$-Set isomorphisms of $X$ to $Y$. Let us exhibit such an equivalence. This will come in handy when we get to constructing Eilenberg-MacLane spaces, and will help us get a feel for how univalence is used in practice.
 
@@ -296,7 +313,7 @@ It is not too hard to see that this is equivalent to $e$ respecting the actions 
 
 \section{Truncation and Connectedness}
 
-\subsection{$n$-truncated types}
+\subsection{$n$-truncated types}\label{trunc}
 
 When considering a given type, one might wonder what that type would look like if it was to be truncated to an $n$-type. That is, if we `forgot' all of the higher structure. For instance we want the $0$-truncation (or set-truncation) of $A$ (denoted $\|A\|_{0}$) to have `the same inhabitants' as $A$ with all paths contracted. Similarly, the propositional truncation of $A$ ($\|A\|_{-1}$) will be $\mathbb{1}$ if $A$ is inhabited and $\mathbb{0}$ if it is not. We define these objects with a universal property:
 
@@ -316,16 +333,154 @@ But what if $(x = y)$ is merely inhabited ? We then say that $A$ is \emph{connec
 
 Here the topological interpretation helps. The circle $\mathcal{S}^{1}$ is an example of a type that is connected but not a proposition.
 
-\subsection{Connected Component}
+\subsection{Connected Component} \label{connected}
 
 We define the connected component of a pointed type $(A,a_0)$:
 
-\[\baut(A,a_0) :\equiv \sum_{x : A} (x = a_0)\]
+\[\baut(A,a_0) :\equiv \sum_{x : A} \| x = a_0 \|_{-1}\]
 
 It is fairly intuitive that this type is connected (*agd), and that $\Omega(A,a_0) = \Omega(\baut(A,a_0))$. (The loop space of $a_0$ is its loop space in its connected component) (*agd). We are now ready to construct Eilenberg-MacLane spaces!
 
 \section{The Torsor Construction}
 
+\subsection{The Type of Torsors}
 
+\begin{definition}
+  We define the \emph{principal $G$-torsor} $P_{G}$ to be the $G$-Set with carrier $G$ on which $G$ acts by left multiplication.
+\end{definition}
+
+Left multiplication is indeed an action because of associativity (*agd). Therefor one can take its connected components in the type of $G$-Sets. Let us call this space $BG$, also known as the type of $G$-torsors :
+
+\[BG :\equiv \sum_{X : \gset(G)}\| X = P_{G} \|_{-1} \]
+
+Let us show that $BG$ is a delooping of $G$: what we want is an equivalence between the loop space of $(BG, P_{G})$ and $G$.
+
+\begin{gather*}
+  \Omega(BG) \simeq \Omega(BAut(\gset, P_{G})) \\
+             \simeq \Omega(\gset, P_{G}) \text{ (by \ref{connected})}\\
+             \simeq (P_{G} =_{\gset} P_{G}) \\
+             \simeq \gsetiso(P_{G}, P_{G}) \text{ (by \ref{iso}) }\\
+             \simeq G
+\end{gather*}
+
+Let us prove this last equivalence.
+
+\subsection{Characterising  Isomorphisms of the Principal Torsor}
+
+Given an element $g$ of $G$, we can construct an $G$-Set isomorphism from $P_{G}$ to itself by right-multiplication: It respects the action of $G$ by associativity, and it is an equivalence because it is invertible (of inverse multiplication to the right by $g^{-1}$) (*agd). Now suppose we are given an isomorphism of $P_{G}$. Recall that this is a map from $G$ to itself. Let us send it to it's image of $1_{G}$. Let us see how these maps are inverses of oneanother.
+
+On the one hand, if one takes an element of $G$, sends it to right multiplication, and takes the image of $1_{G}$, one ends up with that same element.
+
+On the other hand, for every $f$ $G$-Set isomorphism, the underlying map from $G$ to itself respects multiplication. Therefor if $g : G$:
+
+\begin{gather*}
+  f(g) = f(1_{G} \cdot g) \\
+  = f(1_{G}) \cdot g
+\end{gather*}
+
+Therefor we have shown that the isomorphisms of $P_{G}$ are equivalent to $G$.
+
+\subsection{Other Homotopy Groups}
+
+We have seen that $\Omega(BG) \simeq G$, which reads $\pi_1(BG) \simeq G$, for the loop-space in HoTT is the space of loops up to higher homotopies. Furthermore, since $G$ is a set, we can also say that $\Omega^{n}(BG)$ for $n \geq 2$ is trivial (*agd). Finally, we know that $\pi_{0}(BG) = \mathbb{1}$ because $BG$ is connected (as a connected component \ref{connected}), and non empty (it contains $\refl$). And so we have shown that $BG$ is in fact an Eilenberg-Maclane space of $G$.
+
+\section{A Minimal Construction}
+
+My supervisors had noticed that in the case of cyclic groups like $\mathbb{Z}$, actions on a set are caracterised by the action of the generator $1$, and so it is enough to sum on all automorphisms of $X$ rather than on all actions of $G$. Their intuition was that as long as one knows how to generate a group from a subset, one only has to sum on the automorphisms for each generator. In this section, we will see what this means, and prove that this does in fact allow for a compact construction of $BG$.
+
+\subsection{Sets Acting on Sets}
+
+Before we get to building a more compact version of $BG$ we need to think about how a set (a subset of a group for example) can act on another set. When $G$ acts on a set $X$, every element of the group corresponds to an automorphism $(X \simeq X)$, in a way that respects group laws. In other words, a group action is an group morphism of $G$ in $Aut(X)$ (*agd). Let us generalise this notion: we can think of the action of a set $Y$ on $X$ as a function that sends every $y$ in $X$ to an automorphism of $X$.
+
+In the following we will only consider the action of finite sets, thus isomorphic to $\fin n$, which is the set of $n$ elements in \verb|cubical|. We can then think of two set actions, say  $(f_1,\cdots,f_{n})$ on set $Y$ and $(g_1,\cdots,g_n)$ on set $Z$, as isomorphic if there exists a function $h : (Y \simeq Z)$ that makes all of the squares commute:
+
+\[(Y, f_1,\cdots, f_n = Z, g_1,\cdots, g_{n}) :\equiv \sum_{h : Y \simeq Z } \prod_{i : \fin n} h \circ f_{i} = g_{i} \circ h\]
+
+INSERT DIAGRAM
+
+Now we can express the minimal construction of $B \mathbb{Z}$ mentioned above, which is saying that we only need the $G$-Sets that coincide with the principal torsor on the generators:
+
+\[B \mathbb{Z} = \sum_{X : Set} \sum_{f_{1} : X \simeq X} \| (X,f_1 = G, \lambda x . x + 1) \|_{-1}\]
+
+\subsection{Generating Groups}
+
+Next we need to formalize generation in HoTT. This are different ways to do this, and the differences are subtle: we will discuss them in the next section. For now, let us use the most flexible definition:
+
+\paragraph{The Free Group of $A$:} Classicaly, the free group on $A$, denoted $\free A$, is the least group generated by elements of $A$. On can think of it as words on $A$, with every $a \in A$ having an inverse. In \verb|cubical| they are defined in a very intuitive way using a HIT: $A$ injects into the group, there is a product rule, and inverses cancel out with higher paths. This group has two interesting properties:
+
+\begin{proposition}
+  Any map from $A$ to a group $G$ naturally induces a group homomorphism from $\free A$ to $G$.
+\end{proposition}
+
+\begin{proof}
+  One only has to define the homorphism inductively: the image of $A$ is chosen, the image of a product can be chosen as the product of the images and so forth. The proof that this is a morphism is trivial (it uses $\refl$ everywhere).
+\end{proof}
+
+\begin{proposition} \label{uniq}
+  Two group homomorphisms from $\free A$ that agree on $A$ are equal.
+\end{proposition}
+
+\begin{proof}
+  This is shown by a straightforward induction on $\free A$.
+\end{proof}
+
+\paragraph{Strong Generation:} Let us start with a subset of $G$: $(g_1,\cdots, g_{n})$. This subset will be represented in HoTT by a function $g : \fin n \to G$. We call $\free n$ the free group of $\fin n$, and $\product$ the morphism induced by $g$, i.e. that maps words of $\fin n$ to the corresponding product of $g_{i}$'s.
+
+\begin{definition}
+  We say that $(g_1, \cdots, g_{n})$ \emph{generates} $G$ if there is a function that maps any element $g : G$ to a word $w : \free n$, along with a proof that $\product(w) = g$.
+
+  \[\decomp : \prod_{g : G} \sum_{w : \free n} (\product(w) = g)\]
+\end{definition}
+
+\subsection{Minimal Construction}
+
+We can now write what it is that we would like to prove. If we are given a group $G$ that is (strongly) generated by $(g_{1}, \cdots, g_{n})$, we want:
+
+\[BG = \sum_{X : Set} \sum_{f : \fin n \to (X \simeq X)} \| (X, f_1, \cdots, f_{n} = G, \lambda x . x \cdot g_1, \cdots, \lambda x . x \cdot g_{n}) \|_{-1}\]
+
+We will show that it is equivalent to the first construction. For compactness we will right the isomorphism with $P_{G}$ as $\commutingsquares(X,f)$.
+
+\paragraph{From Group Action to Set Action:} If we are given a $G$-Set $(X, \phi)$ and a truncated equality of type $\|(X, \phi) = P_{G}\|_{-1}$, we can take the set $X$, along with the isomorphisms $f_i = \phi(g_{i})$, and we need to construct a truncated Set-action isomorphism. Since what we are trying to show is a proposition, we can assume we are given a path $p : (X,\phi) = P_{G}$. (by the universal property of truncated types \ref{trunc}). This path induces an equivalence $h$ from $X$ to $G$, and one can compute that for every $i$ the transport of $f_{i}$ is $h \circ f_i \circ h^{-1}$, which is therefor equal to $(\lambda x . g_{i} \cdot x)$ : this gives us the commuting squares property, which we truncate to get the right type.
+
+ \[\sum_{X : \gset} \| X = P_{G} \|_{-1} \to \sum_{X : Set} \sum_{f : \fin n \to (X \simeq X)} \| \commutingsquares(X,f) \|_{-1} \]
+
+ \paragraph{From Set Action to Group Action:} Suppose we are given a set $X$ and $f_{i}$'s, as well as a proof of $\| \commutingsquares (X,f) \|_{-1}$, we want to build a $G$-Set over the set $X$. To build it however, it is much more convenient to suppose that we have a proper $h : X \simeq G$ that makes the squares commute. Therefor, we will use a common in technique in dealing with truncated type: we will show that there exists a unique action $\phi$ such that $\phi(g_{i}) = f_{i}$:
+
+ \[\iscontr \left( \sum_{\phi : \action(G,X)} \prod_{i : \fin n} \phi(g_{i}) = f_{i} \right) \]
+
+ This type is a proposition, so we can use a proper $h : \commutingsquares(X, f)$ to show it. First we need the action: just like we did for $\product$, we can define $\comp$ to be the morphism from $\free n$ to $\aut(X)$ induced by $f$. This way we can define:
+
+ \[\phi(g) = \comp (\decomp g)\]
+
+ One can prove that this is indeed an action (and at the same time that $\phi(g_i) = f_i$) by showing that in fact $\phi(g)(x) = h^{-1}(g \cdot h(x))$. This is true because the commuting squares property tells us that $\comp$ and $(\lambda w . x . h^{-1}(\product(w) \cdot h(x))$ are group morphisms that coincide on every $i : \fin n$, and so they must be equal (\ref{uniq}). Using this decomposition of $\phi$ it is obvious that this is a suitable action. To show that such an action is unique,
+
+ TODO
+
+ Finally, to prove $\|(X,\phi) = P_{G} \|_{-1}$, we can again use $h$ and decompose $\phi$, showing that $h$ is a $G$-Set isomorphism, and therefor equivalent to a path.
+
+ \[\sum_{X : Set} \sum_{f : \fin n \to (X \simeq X)} \| \commutingsquares(X,f) \|_{-1} \to \sum_{X : \gset} \| X = P_{G} \|_{-1}\]
+
+ \paragraph{Going Back and Forth}
+
+ At the time of writing this report, the formal proof that the two functions above are inverses of one other has not been written down. However, on paper, the steps are as follows :
+
+ $X$ is clearly preserved in both directions. To show that the $f_{i}$'s are preserved, which is a proposition (because they map to a $\set$). So one can use $h$ to show that they must be equal to $\lambda x . h^{-1} (g_{i} \cdot h(x))$. To show that the truncated $h$ is the preserved is trivial because it is a proposition. In the other direction, we can also notice that the action maps to a set, so its preservation is propositional. We can then use equality to $P_{G}$ to show that it is preserved. Finally the truncated equality is preserved as a proposition.
+
+ \section{Studying Generation}
+
+ The most subtle detail I was led to study during this internship is the several ways in which a group can be generated. There is \emph{strong} generation, that we have used so far:
+
+ \[\prod_{g : G} \sum_{w : \free n} \product(w) = g\]
+
+ But we might like to show that the result still holds for a \emph{weaker} variation:
+
+
+ \[\prod_{g : G} \| \sum_{w : \free n} \product(w) = g \|_{-1}\]
+
+ Through a bit of study we showed that in the finite case, weak generation is equivalent to truncated strong-generation, which is enough for the minimal construction to work (*agd). But this led me ask, what about the non-finite case ? It turns out that these two types remain equivalent when one assumes the action of choice. Furthermore, if one considers truncated strong-generation, one can index with any set, finite or non-finite (*agd).
+
+ \section{Conclusion}
+
+ We have managed to show that the minimal construction does indeed work for any group that we know how to generate. Figuring out that the non-finite case is more complex, but still works in a satisfying way, was the highlight of my studies on paper. Durning this internship, I spent most of my time discovering both Agda and the cubical library, but now I feel more confident using the software to write proper mathematical proofs. In fact, as suggested by my supervisors, I will try to clean up the formalisation of $G$-Sets to formulate a pull request to the cubical library. Furthermore, The work done on the minimal construction will also be completed to write a paper intended for the JFLA.
 
 \end{document}
