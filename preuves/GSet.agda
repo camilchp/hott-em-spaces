@@ -172,8 +172,8 @@ transport-* {ℓ} {G} {X} {Y} {fEq} =
     f = fst fEq
     h = fst (invEquiv fEq)
 
-GSet-univalence : {G : Group ℓ} {X Y : GSet ℓ G} → (GSetEquiv X Y) ≃ (X ≡ Y)
-GSet-univalence {ℓ} {G} {X} {Y} = isoToEquiv e
+GSetUnivalence : {G : Group ℓ} {X Y : GSet ℓ G} → (GSetEquiv X Y) ≃ (X ≡ Y)
+GSetUnivalence {ℓ} {G} {X} {Y} = isoToEquiv e
   where
 
     _*y_ = GSetStr._*_ (str Y)

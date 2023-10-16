@@ -301,7 +301,7 @@ module _ (G : Group ℓ) (n : ℕ) (g : Fin n → ⟨ G ⟩) where
                 lem = cong (λ x → x .Action._*_) XgsetIsTheRightAction
 
           equalsPG : ∥ commutingSquares X f ∥₁ → ∥ PG ≡ Xgset ∥₁
-          equalsPG = Cubical.HITs.PropositionalTruncation.elim (λ _ → isPropPropTrunc) λ comSq → ∣ fst theorem (gse comSq) ∣₁
+          equalsPG = Cubical.HITs.PropositionalTruncation.elim (λ _ → isPropPropTrunc) λ comSq → ∣ fst GSetUnivalence (gse comSq) ∣₁
 
       Iso.inv e (Xgset , equalsPG) = (⟨ Xgset ⟩ ,  trc) , f , squaresDoCommute equalsPG
         where

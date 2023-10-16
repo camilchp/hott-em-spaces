@@ -40,7 +40,7 @@ module delooping (G : Group ℓ) where
   BG = BAut (GSet ℓ G , PG)
 
   lemme : ⟨ G ⟩ ≃ (PG ≡ PG)
-  lemme = compEquiv carac theorem
+  lemme = compEquiv carac GSetUnivalence
     where
       carac : ⟨ G ⟩ ≃ GSetEquiv PG PG
       carac = isoToEquiv e
