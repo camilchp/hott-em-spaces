@@ -172,8 +172,8 @@ transport-* {ℓ} {G} {X} {Y} {fEq} =
     f = fst fEq
     h = fst (invEquiv fEq)
 
-theorem : {G : Group ℓ} {X Y : GSet ℓ G} → (GSetEquiv X Y) ≃ (X ≡ Y)
-theorem {ℓ} {G} {X} {Y} = isoToEquiv e
+GSet-univalence : {G : Group ℓ} {X Y : GSet ℓ G} → (GSetEquiv X Y) ≃ (X ≡ Y)
+GSet-univalence {ℓ} {G} {X} {Y} = isoToEquiv e
   where
 
     _*y_ = GSetStr._*_ (str Y)
@@ -252,4 +252,14 @@ theorem {ℓ} {G} {X} {Y} = isoToEquiv e
               lem3 : (g : ⟨ G ⟩) (y : ⟨ Y ⟩) → g *i y ≡ g *y y
 
     Iso.rightInv e p = cong ΣPathP (ΣPathP (ua-pathToEquiv (fst (PathPΣ p)) , {!!}))
-    Iso.leftInv e = {!!}
+    Iso.leftInv e = ?
+
+-- open import Cubical.Foundations.Equiv.Fiberwise
+
+-- theorem' : {G : Group ℓ} {X Y : GSet ℓ G} → (X ≡ Y) ≃ (GSetEquiv X Y)
+-- theorem' {ℓ} {G} {X} {Y} = fundamentalTheoremOfId GSetEquiv (λ _ → idGSetEquiv) (λ X → {!!}) X Y
+  -- where
+  -- contrΣ {ℓ ℓ' : Level} {A : Type ℓ} {B : A → Type ℓ'} 
+  -- contrΣ = ?
+  -- lem : (X : GSet ℓ G) → isContr (Σ (GSet ℓ G) λ Y → GSetEquiv X Y)
+  -- lem X = {!!}
