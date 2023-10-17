@@ -149,7 +149,7 @@ module _ (G : Group ℓ) (n : ℕ) (g : Fin n → ⟨ G ⟩) where
          EquivLeftMulHom : GroupHom G (AutGroup (⟨ G ⟩ , (str G) .GroupStr.is-set))
          EquivLeftMulHom = EquivLeftMul , record { pres· = EquivLeftMulPres· ; pres1 = EquivLeftMulPres1 ; presinv = EquivLeftMulPresInv }
 
-         EquivLeftMulHom = EquivLeftMul , record { pres· = EquivLeftMulPres· ; pres1 = EquivLeftMulPres1 ; presinv = EquivLeftMulPresInv }
+         -- EquivLeftMulHom = EquivLeftMul , record { pres· = EquivLeftMulPres· ; pres1 = EquivLeftMulPres1 ; presinv = EquivLeftMulPresInv }
 
     -- TODO: Renommer
     decomposition : compfHom ≡ HomHDecomp
